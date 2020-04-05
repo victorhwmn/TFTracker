@@ -1,0 +1,77 @@
+
+.contentMatch{
+    width: 1000px;
+    height: 1000px;
+    position: absolute;
+    left : 20%;
+    top : 10%;
+}
+
+.liDiv{
+    margin :5px;
+    list-style-type:none;
+    border: 2px solid gainsboro;
+    width: 800px;
+    height: 150px;
+}
+
+.placeDiv{
+    margin : 0 0  0 20px ;
+    width: 100px;
+    float: left;
+
+}
+
+.unitDiv{
+    left: 20px;
+    top : 20px;
+    position: relative;
+    float: center;
+}
+
+
+.imgChamp_0
+{
+    margin : 5px;
+    position: relative;
+    float : left;
+    border-radius: 50%;
+    border : 3px solid #EFE2DA;
+    max-width: 50px;
+}
+.imgChamp_1
+{
+    margin : 5px;
+    position: relative;
+    float : left;
+    border-radius: 50%;
+    border : 3px solid #1D8A3B;
+    max-width: 50px;
+}
+.imgChamp_2
+{
+    margin : 5px;
+    position: relative;
+    float : left;
+    border-radius: 50%;
+    border : 3px solid #23C8E6;
+    max-width: 50px;
+}
+.imgChamp_3
+{
+    margin : 5px;
+    position: relative;
+    float : left;
+    border-radius: 50%;
+    border : 3px solid #BA78FC;
+    max-width: 50px;
+}
+.imgChamp_4
+{
+    margin : 5px;
+    position: relative;
+    float : left;
+    border-radius: 50%;
+    border : 3px solid #F7BC22;
+    max-width: 50px;
+}
