@@ -1,58 +1,46 @@
 import React,{useEffect,useState} from 'react';
-//import Query from 'query-string';  
 
 import './styles.css';
 import logoImg from '../../assets/logo.png';
-import {matchApi, userApi} from '../../services/api';
-
+import {matchApi} from '../../services/api';
 
 
 export default function Menu(){
     const username = localStorage.getItem('username');
     const puuid = localStorage.getItem('puuid');
     const api_key = localStorage.getItem('api_key');
+    const [matches,setMatches] = useState([]);
     const [matchdata,setMatchData] = useState([]);
-    const [participants,setParticipants] = useState([]);
 
 
 
     useEffect(() => {
-        const query = require('query-string');
-        const queryString = query.parse(window.location.search);
 
-        async function getParticipantsName(participants){
-            var i = 0;
-
-            for (i in participants){
-                let participantName = await userApi.get(`by-puuid/${participants[i].puuid}?api_key=${api_key}`, {
+        async function getMatch(data){
+            var matchid;
+            var i;
+            let matchResponse = [];
+            for (matchid in data){
+                let matchDataResponse = await matchApi.get(`${data[matchid]}?api_key=${api_key}`, {
                 });
-                participants[i].name = participantName.data.name;
-
-                i++;
+                matchDataResponse = matchDataResponse.data;
+                for (i in matchDataResponse.info.participants){
+                    if(matchDataResponse.info.participants[i].puuid === puuid){
+                        matchResponse.push(matchDataResponse.info.participants[i]);     
+                    }
+                }            
             }
-            console.log(participants);
-            return(participants);
-
+            return(matchResponse);
         }
 
-
-
-        
-        matchApi.get(`${queryString['matchid']}?api_key=${api_key}`,{
+        matchApi.get(`by-puuid/${puuid}/ids?count=5&api_key=${api_key}`,{
         }).then(response => {
-            setMatchData(response.data);
-            console.log(response.data.info.participants);
-            getParticipantsName(response.data.info.participants).then((result) =>{
-                setParticipants(result.sort((a, b) => (
-                    a.placement > b.placement) ? 1 : -1));
+            setMatches(response.data);
+            getMatch(response.data).then((result) =>{
+                console.log(result);
+                setMatchData(result);
             });
-            
-            
         })
-
-
-
-
     }, [puuid,api_key]);
 
 
@@ -68,23 +56,26 @@ export default function Menu(){
             </div>
 
             <div className = "contentMatch">
+                Username : {username}
+                {console.log("teste" +matchdata)}
                 <ul>
-                    {participants.map(participant =>(
+                    {matchdata.map((match,index) =>(
+                        <a href={`/Match?matchid=${matches[index]}`}>
                         <div className="liDiv">
                             <li> 
                                 <div className="placeDiv">
-                                    <h5>{participant.name}</h5>
-                                    <h2>{participant.placement}#</h2>   
+                                    <h2>{match.placement}#</h2>   
                                 </div>
                                 <div className="unitDiv">
                                     Units:
                                     <br/>
-                                    {participant.units.map(unit =>(
+                                    {match.units.map(unit =>(
                                         <img className={`imgChamp_${unit.rarity}`} src={require(`../../assets/champions/${unit.character_id.substring(5).toLowerCase()}.png`)} alt="Champ1"/>
                                     ))}
                                 </div>
                             </li>
                         </div>
+                        </a>
                     ))}
                 </ul>
             </div>

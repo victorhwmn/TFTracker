@@ -10,7 +10,7 @@ import {userApi} from '../../services/api';
 export default function Menu(){
     const [username,SetUsername] = useState('');
     const history = useHistory();
-    const api_key = "RGAPI-50396e7c-ed70-485a-973a-9d9f2453dcb3";
+    const api_key = "RGAPI-c7284e94-ee5b-42cf-825f-9e8ac083c1be";
 
 
 
@@ -24,7 +24,7 @@ export default function Menu(){
             localStorage.setItem('username',username);
             localStorage.setItem('puuid', userdata.puuid);
             localStorage.setItem('api_key', api_key);
-            history.push('/Match');
+            history.push('/User');
 
         }catch(err){
             alert('Erro');
