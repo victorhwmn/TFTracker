@@ -2,25 +2,28 @@ import React,{useEffect,useState} from 'react';
 
 import './styles.css';
 import logoImg from '../../assets/logo.png';
-import {matchApi} from '../../services/api';
+import {matchApi, userApi} from '../../services/api';
 
 
 export default function Menu(){
     const username = localStorage.getItem('username');
-    const puuid = localStorage.getItem('puuid');
     const api_key = localStorage.getItem('api_key');
     const [matches,setMatches] = useState([]);
     const [matchdata,setMatchData] = useState([]);
+    var puuid 
     var Actualtime 
     var Savetime
-
+    var myHeaders = new Headers();
+    const query = require('query-string');
+    const queryString = query.parse(window.location.search);
 
     useEffect(() => {
+
         async function getMatch(data){
             var matchid;
             var i;
             let matchResponse = [];
-            
+
             //Realiza uma consulta na API da Riot e salva a informação em um Array
             for (matchid in data){
                 let matchDataResponse = await matchApi.get(`${data[matchid]}?api_key=${api_key}`, {
@@ -34,18 +37,35 @@ export default function Menu(){
             }
             return(matchResponse);
         }
+
+        async function getPuuid(){
+            if (queryString['puuid'] === null){
+                let userdata = await userApi.get(`by-name/${queryString['user']}?api_key=${api_key}`, {
+                });
+                userdata = userdata.data;
+                puuid = userdata.puuid;
+                console.log("API puuid")
+            }else{
+                puuid = queryString['puuid'];
+                console.log("Query puuid")
+            }
+        }
+
+
+
         // Pega o tempo atual e o salvo
         Actualtime = Date.now();
         Savetime = sessionStorage.getItem("TimeStore");
 
         //Verifica se passou 30 min desde a ultima consulta e verifica se é o mesmo usuario 
-        if(Savetime != null && Savetime > (Actualtime - (1000 * 60 * 30)) && puuid === sessionStorage.getItem("puuid.save") ){
+        if(Savetime != null && Savetime < (Actualtime - (1000 * 60 * 30)) && puuid === sessionStorage.getItem("puuid.save") ){
             //Pega os dados salvos na sessionStorage
             setMatchData(JSON.parse(sessionStorage.getItem("MatchData")));
             setMatches(JSON.parse(sessionStorage.getItem("Matches")));
             console.log("sessionStorage");
         }
         else {
+            getPuuid();
             //Realiza a consulta na API da Riot
             matchApi.get(`by-puuid/${puuid}/ids?count=5&api_key=${api_key}`,{
             }).then(response => {
@@ -69,8 +89,6 @@ export default function Menu(){
     }, [puuid,api_key]);
 
 
-
-
     return(
         <div className ="menuContainer">
             <div className ="verticalMenu">
@@ -81,7 +99,7 @@ export default function Menu(){
             </div>
 
             <div className = "contentMatch">
-                Username : {username}
+                Username : {queryString['user']}
                 {console.log("teste" +matches)}
                 <ul>
                     {matchdata.map((match,index) =>(

@@ -29,7 +29,6 @@ export default function Menu(){
 
                 i++;
             }
-            console.log(participants);
             return(participants);
 
         }
@@ -55,8 +54,6 @@ export default function Menu(){
     }, [puuid,api_key]);
 
 
-
-
     return(
         <div className ="menuContainer">
             <div className ="verticalMenu">
@@ -69,6 +66,7 @@ export default function Menu(){
             <div className = "contentMatch">
                 <ul>
                     {participants.map(participant =>(
+                        <a href={`/User?user=${participant.name}&puuid=${participant.puuid}`} >
                         <div className="liDiv">
                             <li> 
                                 <div className="placeDiv">
@@ -84,6 +82,7 @@ export default function Menu(){
                                 </div>
                             </li>
                         </div>
+                        </a>
                     ))}
                 </ul>
             </div>

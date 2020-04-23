@@ -22,10 +22,11 @@ export default function Menu(){
             let userdata = await userApi.get(`by-name/${username}?api_key=${api_key}`, {
             });
             userdata = userdata.data;
-            localStorage.setItem('username',username);
-            localStorage.setItem('puuid', userdata.puuid);
             localStorage.setItem('api_key', api_key);
-            history.push('/User');
+            history.push({
+                pathname: '/User',
+                search:`?user=${username}&puuid=${userdata.puuid}`,
+            });
 
         }catch(err){
             alert('Erro');
@@ -62,7 +63,7 @@ export default function Menu(){
                         placeholder="Key"
                         value={api_key}
                         onChange={e => SetApiKey(e.target.value)}
-                        
+
                     />
                     <button className="button" type="submit">Enter</button>
                 </form>
