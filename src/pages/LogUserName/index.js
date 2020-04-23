@@ -9,8 +9,9 @@ import {userApi} from '../../services/api';
 
 export default function Menu(){
     const [username,SetUsername] = useState('');
+    const [api_key,SetApiKey] = useState('');
+
     const history = useHistory();
-    const api_key = "RGAPI-c7284e94-ee5b-42cf-825f-9e8ac083c1be";
 
 
 
@@ -32,6 +33,12 @@ export default function Menu(){
         }
     }
 
+    window.onload = function(){
+        if (localStorage.getItem('api_key') != null){
+            document.getElementById('key').value = this.localStorage.getItem('api_key')
+        }
+            
+    }
 
 
     return(
@@ -49,6 +56,13 @@ export default function Menu(){
                         placeholder="Username"
                         value={username}
                         onChange={e => SetUsername(e.target.value)}
+                    />
+                    <input 
+                        id = "key"
+                        placeholder="Key"
+                        value={api_key}
+                        onChange={e => SetApiKey(e.target.value)}
+                        
                     />
                     <button className="button" type="submit">Enter</button>
                 </form>

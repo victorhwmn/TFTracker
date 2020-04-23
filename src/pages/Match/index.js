@@ -15,7 +15,6 @@ export default function Menu(){
     const [participants,setParticipants] = useState([]);
 
 
-
     useEffect(() => {
         const query = require('query-string');
         const queryString = query.parse(window.location.search);

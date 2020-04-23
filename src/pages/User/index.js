@@ -11,15 +11,17 @@ export default function Menu(){
     const api_key = localStorage.getItem('api_key');
     const [matches,setMatches] = useState([]);
     const [matchdata,setMatchData] = useState([]);
-
+    var Actualtime 
+    var Savetime
 
 
     useEffect(() => {
-
         async function getMatch(data){
             var matchid;
             var i;
             let matchResponse = [];
+            
+            //Realiza uma consulta na API da Riot e salva a informação em um Array
             for (matchid in data){
                 let matchDataResponse = await matchApi.get(`${data[matchid]}?api_key=${api_key}`, {
                 });
@@ -32,15 +34,38 @@ export default function Menu(){
             }
             return(matchResponse);
         }
+        // Pega o tempo atual e o salvo
+        Actualtime = Date.now();
+        Savetime = sessionStorage.getItem("TimeStore");
 
-        matchApi.get(`by-puuid/${puuid}/ids?count=5&api_key=${api_key}`,{
-        }).then(response => {
-            setMatches(response.data);
-            getMatch(response.data).then((result) =>{
-                console.log(result);
-                setMatchData(result);
-            });
-        })
+        //Verifica se passou 30 min desde a ultima consulta e verifica se é o mesmo usuario 
+        if(Savetime != null && Savetime > (Actualtime - (1000 * 60 * 30)) && puuid === sessionStorage.getItem("puuid.save") ){
+            //Pega os dados salvos na sessionStorage
+            setMatchData(JSON.parse(sessionStorage.getItem("MatchData")));
+            setMatches(JSON.parse(sessionStorage.getItem("Matches")));
+            console.log("sessionStorage");
+        }
+        else {
+            //Realiza a consulta na API da Riot
+            matchApi.get(`by-puuid/${puuid}/ids?count=5&api_key=${api_key}`,{
+            }).then(response => {
+                //Atualiza o match e salva-o no sessionStorage
+                setMatches(response.data);
+                sessionStorage.setItem("Matches",JSON.stringify(response.data));
+                
+                getMatch(response.data).then((result) =>{
+                    setMatchData(result);
+                    sessionStorage.setItem("MatchData",JSON.stringify(result));
+                    sessionStorage.setItem("puuid.save",puuid);
+                    sessionStorage.setItem("TimeStore",Date.now());
+                });
+            })
+            console.log("API");
+        }
+
+
+
+
     }, [puuid,api_key]);
 
 
@@ -57,7 +82,7 @@ export default function Menu(){
 
             <div className = "contentMatch">
                 Username : {username}
-                {console.log("teste" +matchdata)}
+                {console.log("teste" +matches)}
                 <ul>
                     {matchdata.map((match,index) =>(
                         <a href={`/Match?matchid=${matches[index]}`}>
